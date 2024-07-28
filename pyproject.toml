@@ -1,11 +1,14 @@
 [project]
 name = "pysswordsz"
 version = "0.1.0"
-description = "Add your description here"
+description = "A password manager in Python that not only manages passwords but also serves as a simple encryption software."
 authors = [
-    { name = "SidneyZhang", email = "liangyi@me.com" }
+    { name = "SidneyZhang", email = "zly@lyzhang.me" }
 ]
-dependencies = []
+dependencies = [
+    "typer>=0.12.3",
+    "pyperclip>=1.9.0",
+]
 readme = "README.md"
 requires-python = ">= 3.8"
 
