@@ -14,7 +14,70 @@ A password manager in Python that not only manages passwords but also serves as 
 
 ## 快速开始 Quick Start
 
-暂无
+如果你只使用密码生成的功能，那么，你无需进行任何设置。
+但是，如果你需要使用密码库或者进行加密操作，那必须先初始化整体功能：
+
+```bash
+$ pysswordsz init
+```
+
+如果你需要在其他地方保存key文件和数据文件，你需要在初始化后进行设置：
+
+```bash
+$ pysswordsz config set keyfolder '~\place\you\want'
+$ pysswordsz config set datafolder '~\place\you\want'
+```
+
+但请注意！key文件和数据文件的保存地址需要提前创建好，再进行设置，否则会没有相关路径而使程序出错。
+
+正常加密一个文件和解密一个文件：
+
+```bash
+$ pysswordsz crypt encr '.../your.file'
+$ pysswordsz crypt decr '.../your.file.lyz'
+```
+
+使用密码库，首先需要建立一个库，名称可以是任意的，这里随便起了一个叫做`firstVault`：
+
+```bash
+$ pysswordsz pass build 'firstVault'
+```
+
+然后就可以添加密码了：
+
+```bash
+$ pysswordsz pass add system_one
+```
+
+如果你有多个密码库，则添加时需要指定一个你要保存的密码库：
+
+```bash
+$ pysswordsz pass add system_two --to oneVault
+```
+
+当然，可以通过配置命令指定默认库，不做指定的话，最后新建的密码库就是默认的密码库，下面是指定密码库的操作：
+
+```bash
+$ pysswordsz config set vault thatVault
+```
+
+当你在默认密码库中保存了多个密码时，当需要查找密码时，可以如下操作：
+
+```bash
+$ pysswordsz search oneSystem
+```
+
+当然，你也可以指定列出某一个系统曾经使用过的所有密码：
+
+```bash
+$ pysswordsz search twoSystem --all
+```
+
+最后一个常用操作，就是更新一个密码：
+
+```bash
+$ pysswordsz update theSystem
+```
 
 ## 配置 Configuration
 

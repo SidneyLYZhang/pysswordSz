@@ -5,6 +5,8 @@ from random import shuffle
 from math import floor
 from collections.abc import Callable
 from typing import Any
+from pzsconfig import pszconfig
+from getpass import getpass
 
 def belongto(oripart:Callable, target:Callable) -> bool:
     for i in oripart :
@@ -62,6 +64,11 @@ def generatePassword(n:int, need_number:bool = True,
         pw = "".join(res)
     return pw
 
+def newKeys() -> None:
+    print("输入你的主密码。\n但请特别注意：一旦丢失主密码，则加密信息和保存的密码将不再能打开！")
+    passwordx = getpass("Core Password :")
+    
+
 class encryting(object):
     def __init__(self) -> None:
-        pass
+        home = pszconfig().keyfolder()

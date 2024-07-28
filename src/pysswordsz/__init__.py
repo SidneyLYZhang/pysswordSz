@@ -1,6 +1,7 @@
 import typer
 import pyperclip as clip
 from encrytool import generatePassword
+from pzsconfig import newConfig
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -13,7 +14,9 @@ app.add_typer(cryptl, name="crypt")
 
 @app.command()
 def version():
-    print("VERSION 0.0.1 (c) 2024 Sidney Zhang <zly@lyzhang.me>")
+    print("VERSION 0.1.0")
+    print("LICENSE under GPL-3.0")
+    print("pysswordSz Copyright (C) 2024  Sidney Zhang <zly@lyzhang.me>")
 
 @app.command()
 def genpass(n: int = 16, need_upper:bool = True,
@@ -28,6 +31,11 @@ def genpass(n: int = 16, need_upper:bool = True,
     if to_clip :
         clip.copy(pswds)
 
+@app.command()
+def init():
+    newConfig()
+    print("The initialization of pysswordSz is complete!")
+
 @config.command("list")
 def cfg_list():
     print("list all")
@@ -40,8 +48,8 @@ def cfg_remove():
 def cfg_remove():
     print("set cofig")
 
-@passdb.command("init")
-def pss_init():
+@passdb.command("build")
+def pss_build():
     print("init now")
 
 @passdb.command("search")
@@ -63,6 +71,10 @@ def ctl_encr(file:str, zip:bool=False):
 @cryptl.command("decr")
 def ctl_decr(file:str):
     print("decrypt {}".format(file))
+
+@cryptl.command("list")
+def ctl_list():
+    print("list cryted")
 
 if __name__ == "__main__":
     app()
