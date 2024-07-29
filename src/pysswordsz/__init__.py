@@ -1,7 +1,8 @@
 import typer
 import pyperclip as clip
-from encrytool import generatePassword
+from encrytool import generatePassword,newKeys,encryting
 from pzsconfig import newConfig
+from rich import print
 
 app = typer.Typer(no_args_is_help=True)
 
@@ -34,6 +35,7 @@ def genpass(n: int = 16, need_upper:bool = True,
 @app.command()
 def init():
     newConfig()
+    newKeys()
     print("The initialization of pysswordSz is complete!")
 
 @config.command("list")
@@ -51,6 +53,10 @@ def cfg_remove():
 @passdb.command("build")
 def pss_build():
     print("init now")
+
+@passdb.command("add")
+def pss_add(name:str):
+    print("add now {}".format(name))
 
 @passdb.command("search")
 def pss_search(name:str):
@@ -70,11 +76,17 @@ def ctl_encr(file:str, zip:bool=False):
 
 @cryptl.command("decr")
 def ctl_decr(file:str):
-    print("decrypt {}".format(file))
+    cipher = encryting()
+    cipher.decrypt_file(file)
+    print("[green]Decryption is complete!")
 
 @cryptl.command("list")
 def ctl_list():
-    print("list cryted")
+    dataList = encryting().list_files()
+    if dataList.is_empty():
+        print("There is currently no encrypted data...")
+    else:
+        print(dataList)
 
 if __name__ == "__main__":
     app()

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import typer
 import yaml
 import platform
 import os
@@ -23,6 +24,12 @@ def newConfig() -> None:
         "keyfolder":setting_config(),
         "datafolder":setting_config()
     }
+    changefolder = typer.confirm("是否更改密钥KEY文件的保存位置?\nDo you want to change the KEY file location?\n--> ")
+    if changefolder :
+        data["keyfolder"] = typer.prompt("请输入密钥KEY文件的保存位置\nPlease input the KEY file location\n--> ")
+    changefolder = typer.confirm("是否更改数据DATA文件的保存位置?\nDo you want to change the DATA file location?\n--> ")
+    if changefolder :
+        data["datafolder"] = typer.prompt("请输入数据DATA文件的保存位置\nPlease input the DATA file location\n--> ")
     os.mkdir(setting_config())
     with open(setting_config() / "config.yaml", "w", encoding="utf-8") as fx :
         yaml.dump(data, fx)
