@@ -8,12 +8,12 @@ import os
 
 def setting_config():
     # 处理配置位置
-    overpath = os.getenv("PASSWORDS_SZ")
+    overpath = os.getenv("PYSSWORDSZ")
     if overpath is None :
         if platform.system() == "Windows" :
-            overpath = "AppData/Local/passwords_sz"
+            overpath = "AppData/Local/pysswordsz"
         else :
-            overpath = ".config/passwords_sz"
+            overpath = ".config/pysswordsz"
         conPath = Path.home() / overpath
     else :
         conPath = overpath
@@ -21,7 +21,7 @@ def setting_config():
 
 def newConfig() -> None:
     data = {
-        "columns": ["name","url","user","password","comment"],
+        "columns": ["url","user","comment"],
         "keyfolder":setting_config(),
         "datafolder":setting_config()
     }
@@ -72,8 +72,8 @@ class pszconfig(object):
                 newcols = value.spilt(",")
             else:
                 newcols = list(set(self.columns.append(value)))
-            if belongto(newcols,["uuid","createtime"]) :
-                raise KeyError('"uuid" and "createtime" are reserved names, and column names cannot be set.')
+            if belongto(newcols,["uuid","name","password","createtime"]) :
+                raise KeyError('"uuid" "name" "password" and "createtime" are reserved names.')
             else:
                 self.__data[name] = newcols
         else:
@@ -85,7 +85,7 @@ class pszconfig(object):
             raise KeyError("The configuration does not exist!")
         if name in ["columns","keyfolder","datafolder"]:
             if name == "columns":
-                self.__data[name] = ["name","url","user","password","comment"]
+                self.__data[name] = ["url","user","comment"]
             else :
                 self.__data[name] = setting_config()
         else :

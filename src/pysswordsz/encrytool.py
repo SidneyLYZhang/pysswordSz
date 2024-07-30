@@ -13,9 +13,11 @@ from getpass import getpass
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import AES, PKCS1_OAEP
+from Crypto.IO import PEM
 from zipfile import ZipFile,ZIP_DEFLATED
 from uuid import uuid3,NAMESPACE_URL
 from pathlib import Path
+from typer import prompt
 
 
 def belongto(oripart:Callable, target:Callable) -> bool:
@@ -75,8 +77,8 @@ def generatePassword(n:int, need_number:bool = True,
     return pw
 
 def newKeys() -> None:
-    print("输入你的主密码。\n但请特别注意：一旦丢失主密码，则加密信息和保存的密码将不再能打开！")
-    passwordx = getpass("Core Password :")
+    print("输入你的主密码。\n但请特别注意：务必记住主密码，一旦丢失主密码，则加密信息和保存的密码将不再能打开！")
+    passwordx = prompt("Core Password:", hide_input=True, confirmation_prompt=True)
     print("Waiting for creating the keys...")
     private = RSA.generate(3072)
     keyHome = pszconfig().keyfolder()
@@ -98,13 +100,14 @@ class encryting(object):
             data = f.read()
         self.__private = RSA.import_key(data, passphrase=passwordx)
         self.__public = self.__private.public_key()
-    def encrypt_data(self, data:str) -> bytes:
+    def encrypt_data(self, data:str) -> str:
         cipher = PKCS1_OAEP.new(self.__public)
         ciphertext = cipher.encrypt(data.encode("utf-8"))
-        return ciphertext
-    def decrypt_data(self, data:bytes) -> str:
+        return PEM.encode(ciphertext, "DATA")
+    def decrypt_data(self, data:str) -> str:
+        odata = PEM.decode(data)[0]
         cipher = PKCS1_OAEP.new(self.__private)
-        plaintext = cipher.decrypt(data)
+        plaintext = cipher.decrypt(odata)
         return plaintext.decode()
     def encrypt_file(self, file:str|Path, comments:str|None = None) -> None:
         oriPath = Path(file)

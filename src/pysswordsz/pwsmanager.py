@@ -13,7 +13,7 @@ def buildPWDB(name:str) -> None:
     filePlace = cons.datafoldar()
     columns = cons.columns
     data = {
-        i:[] for i in (["uuid"]+columns+["createtime"])
+        i:[] for i in (["uuid","name"]+columns+["password","createtime"])
     }
     data = pl.DataFrame(data)
     data.write_csv(filePlace / (name+".lyz"))
@@ -34,10 +34,10 @@ def ask_password() -> list :
     if is_url :
         resList["urlsafe"] = is_url
     else:
-        resList.append(typer.confirm("是否需要数字? --> ",default=True))
-        resList.append(typer.confirm("是否需要大写字母? --> ",default=True))
-        resList.append(typer.confirm("是否需要符号? --> ",default=True))
-        resList.append(typer.prompt("各类型字符的最小个数 --> ",default=1,type=int))
+        resList["need_number"] = typer.confirm("是否需要数字? --> ",default=True)
+        resList["need_upper"] = typer.confirm("是否需要大写字母? --> ",default=True)
+        resList["eed_punctuation"] = typer.confirm("是否需要符号? --> ",default=True)
+        resList["mina"] = typer.prompt("各类型字符的最小个数 --> ",default=1,type=int)
     return resList
 
 class pwsmanager(object):
@@ -48,9 +48,11 @@ class pwsmanager(object):
         self.__vaultList = cons.vaultlist
         self.__cipher = encryting()
         self.__columns = cons.columns
-    def __read(self, vault:str):
+    def __read(self, vault:str) -> pl.DataFrame:
         theVault = self.__default if vault=="default" else vault
-        print("reading {}".format(theVault))
+        if theVault not in self.__vaultList :
+            raise ValueError("vault {} not exists".format(theVault))
+        return pl.read_csv(self.__home / (theVault+".lyz"))
     def update(self,name:str, vault:str = "default"):
         self.__read(vault)
         print("update a password {}".format(name))
@@ -60,14 +62,22 @@ class pwsmanager(object):
         theVault = self.__default if to=="default" else to
         if theVault not in self.__vaultList :
             raise ValueError("vault {} not exists".format(theVault))
-        add_Data = {"uuid":uuid4()}
+        add_Data = {
+            "uuid":uuid4(),
+            "name":name}
+        pass_config = ask_password()
+        add_Data[i] = self.__cipher.encrypt_data(generatePassword(**pass_config))
         for i in self.__columns:
-            if i == "password" :
-                pass_config = ask_password()
-                add_Data[i] = generatePassword(**pass_config)
+            txt = typer.prompt("please input the {} of {} --> ".format(i,name))
+            is_encr = typer.confirm("是否需要加密保存? --> ")
+            if is_encr :
+                add_Data[i] = self.__cipher.encrypt_data(txt)
             else :
-                add_Data[i] = typer.prompt("please input the {} of {} --> ".format(i,name))
+                add_Data[i] = txt
         add_Data["createtime"] = datetime.now()
-        print("add a password {} into {}".format(name, to))
+        alldata = self.__read(to)
+        alldata = alldata.vstack(pl.DataFrame(add_Data))
+        alldata.write_csv(self.__home / (theVault+".lyz"))
+        print("Complete adding a password of {} into {} vault...".format(name, to))
     def delete(self, name:str, vault:str = "default"):
         print("delete a password {} from {}".format(name,vault))
