@@ -89,6 +89,7 @@ $ pysswordsz pass update theSystem
 | `datafolder` | 数据保存文件夹 | 包括密码库和加密数据列表 |
 | `vault` | 默认密码库 |  |
 | `vaultList` | 所有密码库列表 | 使用`;`隔开各密码库名称的字符串信息；可用于导入旧密码库 |
+| `columns` | 密码库遵循的关键列名称 | 默认为： |
 
 使用以下命令语法管理配置信息：
 

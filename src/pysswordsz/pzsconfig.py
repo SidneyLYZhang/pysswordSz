@@ -1,4 +1,5 @@
 from pathlib import Path
+from encrytool import belongto
 
 import typer
 import yaml
@@ -20,7 +21,7 @@ def setting_config():
 
 def newConfig() -> None:
     data = {
-        "columns": ["name","url","user","password","commen"],
+        "columns": ["name","url","user","password","comment"],
         "keyfolder":setting_config(),
         "datafolder":setting_config()
     }
@@ -36,26 +37,58 @@ def newConfig() -> None:
 
 class pszconfig(object):
     def __init__(self) -> None:
-        self.__home = setting_config()
-        cfile = self.__home / "config.yaml"
-        with open(cfile, "r", encoding="utf-8") as ftxt:
+        self.__home = setting_config() / "config.yaml"
+        with open(self.__home, "r", encoding="utf-8") as ftxt:
             self.__data = yaml.load(ftxt.read(),Loader=yaml.FullLoader)
+    def __saveconfig(self) -> None :
+        with open(self.__home, "w", encoding="utf-8") as fx :
+            yaml.dump(self.__data, fx)
     def keyfolder(self) -> Path:
         fp = self.__data["keyfolder"]
         return Path(fp)
     def datafolder(self) -> Path:
         fp = self.__data["datafolder"]
         return Path(fp)
+    @property
+    def columns(self) -> list:
+        return self.__data["columns"]
+    @property
+    def vaultlist(self) -> list:
+        if "vaultlist" in self.__data.keys():
+            return self.__data["vaultlist"]
+        else :
+            return []
+    @property
+    def vault(self) -> str:
+        if "vault" in self.__data.keys():
+            return self.__data["vault"]
+        else :
+            raise ValueError("No vault is set!")
     def list(self) -> None:
         print(self.__data)
-    def setting(self, name, value) :
+    def setting(self, name:str, value:str) -> None:
         if name == "columns":
             if "," in value :
-                xtemp = value.spilt(",")
+                newcols = value.spilt(",")
             else:
-                xtemp = value
+                newcols = list(set(self.columns.append(value)))
+            if belongto(newcols,["uuid","createtime"]) :
+                raise KeyError('"uuid" and "createtime" are reserved names, and column names cannot be set.')
+            else:
+                self.__data[name] = newcols
         else:
-            xtemp = value
-        print("complete set {} with value {}".format(name,xtemp))
+            self.__data[name] = value
+        self.__saveconfig()
+        print("Complete the configuration settings!")
     def remove(self, name) :
-        print("remove config {}".format(name))
+        if name not in self.__data.keys():
+            raise KeyError("The configuration does not exist!")
+        if name in ["columns","keyfolder","datafolder"]:
+            if name == "columns":
+                self.__data[name] = ["name","url","user","password","comment"]
+            else :
+                self.__data[name] = setting_config()
+        else :
+            self.__data.pop(name)
+        self.__saveconfig()
+        print("Complete removing config {} !".format(name))

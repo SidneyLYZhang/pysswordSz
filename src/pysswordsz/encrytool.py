@@ -167,7 +167,7 @@ class encryting(object):
             pl.col("UUID") != uuid3(NAMESPACE_URL,str(Path(file).parent/disname)))
         encrList.write_csv(self.__dataHome)
     def list_files(self) -> pl.DataFrame:
-        if self.__dataHome.is_exists() :
+        if self.__dataHome.exists() :
             return pl.read_csv(self.__dataHome)
         else :
             return pl.DataFrame()
