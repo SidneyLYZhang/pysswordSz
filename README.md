@@ -83,3 +83,24 @@ $ pysswordsz update theSystem
 
 暂无
 
+## 依赖信息 Dependency
+
+pysswordSz 的构建主要依赖以下关键Package：
+
+| Package | Version | License |
+| --- | --- | --- |
+| [pycryptodome](https://www.pycryptodome.org/) | 3.20.0 | BSD 2-Clause license |
+| [typer](https://github.com/tiangolo/typer) | 0.12.3 | MIT License |
+| [pyperclip](https://github.com/asweigart/pyperclip) | 1.9.0 | BSD-3-Clause license |
+| [pyyaml](https://pyyaml.org/) | 6.0.1 | MIT License |
+| [polars](https://pola.rs) | 1.3.0 | [LICENSE](https://github.com/pola-rs/polars/blob/main/LICENSE) |
+
+## 许可信息 License
+
+pysswordSz is licensed under GPL-3.0 license.
+
+pysswordSz  Copyright (C) 2024  Sidney Zhang <zly@lyzhang.me>
+
+This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+This is free software, and you are welcome to redistribute it
+under certain conditions; type `show c' for details.
