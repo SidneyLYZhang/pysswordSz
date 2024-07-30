@@ -64,24 +64,38 @@ $ pysswordsz config set vault thatVault
 当你在默认密码库中保存了多个密码时，当需要查找密码时，可以如下操作：
 
 ```bash
-$ pysswordsz search oneSystem
+$ pysswordsz pass search oneSystem
 ```
 
 当然，你也可以指定列出某一个系统曾经使用过的所有密码：
 
 ```bash
-$ pysswordsz search twoSystem --all
+$ pysswordsz pass search twoSystem --all
 ```
 
 最后一个常用操作，就是更新一个密码：
 
 ```bash
-$ pysswordsz update theSystem
+$ pysswordsz pass update theSystem
 ```
 
 ## 配置 Configuration
 
-暂无
+目前支持以下可配置信息：
+
+| name | info | comment |
+| --- | --- | --- |
+| `keyfolder` | 密钥保存文件夹 |  |
+| `datafolder` | 数据保存文件夹 | 包括密码库和加密数据列表 |
+| `vault` | 默认密码库 |  |
+| `vaultList` | 所有密码库列表 | 使用`;`隔开各密码库名称的字符串信息；可用于导入旧密码库 |
+
+使用以下命令语法管理配置信息：
+
+```bash
+$ pysswordsz config set <name> <value>
+$ pysswordsz config rm <name>
+```
 
 ## 依赖信息 Dependency
 
