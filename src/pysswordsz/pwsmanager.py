@@ -25,7 +25,7 @@ def buildPWDB(name:str) -> None:
             cons.setting("vaultlist",cons.vaultlist.append(name))
     else:
         cons.setting("vaultlist",[name])
-    print("build a password database {}".format(name))
+    print("Complete build a vault {}".format(name))
 
 def ask_password() -> list :
     resList = {}
@@ -54,10 +54,45 @@ class pwsmanager(object):
             raise ValueError("vault {} not exists".format(theVault))
         return pl.read_csv(self.__home / (theVault+".lyz"))
     def update(self,name:str, vault:str = "default"):
-        self.__read(vault)
-        print("update a password {}".format(name))
+        theVault = self.__default if vault=="default" else vault
+        alldata = self.__read(theVault)
+        if name not in alldata["name"].unique().to_list():
+            raise ValueError("password {} not exists. You need create one".format(name))
+        else:
+            olddata = alldata.filter(pl.col("name")==name)
+        newdata = {
+            "uuid":uuid4(),
+            "name":name}
+        if typer.confirm("是否需要直接生成新密码？ --> ") :
+            password = generatePassword(n=16)
+        else :
+            password = generatePassword(**ask_password())
+        newdata["password"] = self.__cipher.encrypt_data(password)
+        for i in self.__columns:
+            newdata[i] = olddata.select(pl.col(i)).unique().to_numpy()[0][0]
+        newdata["createtime"] = datetime.now()
+        alldata = alldata.vstack(pl.DataFrame(newdata))
+        alldata.write_csv(self.__home / (theVault+".lyz"))
+        print("Complete updated a password of {} ...".format(name))
     def search(self, name:str, all:bool = False, vault:str = "default"):
-        print("search {} password {} in {}".format(("all" if all else "last"),name,vault))
+        data = self.__read(vault)
+        if name not in data["name"].unique().to_list():
+            raise ValueError("password {} not exists. You need create one".format(name))
+        else:
+            sdata = data.filter(pl.col("name")==name)
+            if sdata.is_empty():
+                sdata = data.filter(pl.col("name").str.contains(name))
+        if sdata.is_empty():
+            print("[red]No result found!")
+            return pl.DataFrame()
+        else:
+            sdata = sdata.with_columns(
+                password = pl.col("password").map_elements(lambda x : self.__cipher.decrypt_data(x),return_dtype=pl.String)
+            )
+            if all:
+                return sdata.sort("createtime",descending=True)
+            else:
+                return sdata.sort("createtime",descending=True).head(1)
     def add_password(self,name:str, to:str = "default"):
         theVault = self.__default if to=="default" else to
         if theVault not in self.__vaultList :
@@ -83,4 +118,16 @@ class pwsmanager(object):
         alldata.write_csv(self.__home / (theVault+".lyz"))
         print("Complete adding a password of {} into {} vault...".format(name, to))
     def delete(self, name:str, vault:str = "default"):
-        print("delete a password {} from {}".format(name,vault))
+        theVault = self.__default if vault=="default" else vault
+        data = self.__read(theVault)
+        if name not in data["name"].unique().to_list():
+            raise ValueError("password {} not exists.".format(name))
+        else:
+            data = data.filter(pl.col("name")!=name)
+            data.write_csv(self.__home / (theVault+".lyz"))
+        print("Complete deleted passwords {} from {} ...".format(name,vault))
+    def list(self, vault:str = "default", other_columns:list[str]|None = None):
+        alldata = self.__read(vault)
+        if other_columns :
+            selcols = ["uuid","name"] + other_columns + ["createtime"]
+        return alldata.select(pl.col(selcols))

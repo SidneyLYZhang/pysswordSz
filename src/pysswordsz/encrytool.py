@@ -3,11 +3,10 @@ import shutil
 import polars as pl
 from datetime import datetime
 import os
-
+from collections.abc import Callable
 from secrets import token_urlsafe,randbelow,choice
 from random import shuffle
 from math import floor,ceil
-from collections.abc import Callable
 from typing import Any
 from pzsconfig import pszconfig
 from getpass import getpass
@@ -19,13 +18,8 @@ from zipfile import ZipFile,ZIP_DEFLATED
 from uuid import uuid3,NAMESPACE_URL
 from pathlib import Path
 from typer import prompt
+from pzsconfig import belongto
 
-
-def belongto(oripart:Callable, target:Callable) -> bool:
-    for i in oripart :
-        if i in target :
-            return True
-    return False
 
 def hasin(oripart:Callable, target:Any) -> int:
     resn = 0

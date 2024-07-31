@@ -1,10 +1,15 @@
 from pathlib import Path
-from encrytool import belongto
-
+from collections.abc import Callable
 import typer
 import yaml
 import platform
 import os
+
+def belongto(oripart:Callable, target:Callable) -> bool:
+    for i in oripart :
+        if i in target :
+            return True
+    return False
 
 def setting_config():
     # 处理配置位置
@@ -80,7 +85,7 @@ class pszconfig(object):
             self.__data[name] = value
         self.__saveconfig()
         print("Complete the configuration settings!")
-    def remove(self, name) :
+    def remove(self, name:str) :
         if name not in self.__data.keys():
             raise KeyError("The configuration does not exist!")
         if name in ["columns","keyfolder","datafolder"]:
