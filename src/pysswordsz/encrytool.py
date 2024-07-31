@@ -2,16 +2,17 @@ import string
 import shutil
 import polars as pl
 from datetime import datetime
+import os
 
 from secrets import token_urlsafe,randbelow,choice
 from random import shuffle
-from math import floor
+from math import floor,ceil
 from collections.abc import Callable
 from typing import Any
 from pzsconfig import pszconfig
 from getpass import getpass
 from Crypto.PublicKey import RSA
-from Crypto.Random import get_random_bytes
+from Crypto.Random import get_random_bytes,random
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.IO import PEM
 from zipfile import ZipFile,ZIP_DEFLATED
@@ -49,6 +50,23 @@ def toprandList(top:int, n:int = 4, minz:int = 1) -> list[int] :
     else :
         res = [top - sum(res)] + res
     return res
+
+def generateXKCDPassword(n:int = 6, type_mode:str = "pinyin",
+                         padding:bool = False) -> str :
+    if type_mode not in ["pinyin","wubi","english","german","spanish","mix"]:
+        raise ValueError("type_mode {} not exists".format(type_mode))
+    file = Path(os.path.dirname(__file__)) / "static/{}.wordlist".format(type_mode)
+    sep = " " if padding is False else "!@$%^&*-_+=:|~?/.;"
+    coln = 0 if type_mode in ["pinyin","wubi"] else 1
+    words = pl.read_csv(file,has_header=False,separator="\t")
+    wordlist = [words[randbelow(words.height)].to_numpy()[0,coln].capitalize() for i in range(n)]
+    if padding :
+        xn = ceil(n/4)
+        seqList = ["".join(random.sample(sep,xn)) for i in range(n)]
+        pw = "".join([seqList[i]+wordlist[i] for i in range(n)]) + "".join(random.sample(sep,xn))
+    else:
+        pw = sep.join(wordlist)
+    return pw
 
 def generatePassword(n:int, need_number:bool = True, 
                      need_upper:bool = True, need_punctuation:bool = True, 

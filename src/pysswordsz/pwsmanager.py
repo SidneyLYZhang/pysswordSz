@@ -65,8 +65,11 @@ class pwsmanager(object):
         add_Data = {
             "uuid":uuid4(),
             "name":name}
-        pass_config = ask_password()
-        add_Data[i] = self.__cipher.encrypt_data(generatePassword(**pass_config))
+        if typer.confirm("是否需要生成新密码？ --> ") :
+            password = generatePassword(**ask_password())
+        else :
+            password = typer.prompt("请输入密码 --> ",hide_input=True,confirmation_prompt=True)
+        add_Data["password"] = self.__cipher.encrypt_data(password)
         for i in self.__columns:
             txt = typer.prompt("please input the {} of {} --> ".format(i,name))
             is_encr = typer.confirm("是否需要加密保存? --> ")

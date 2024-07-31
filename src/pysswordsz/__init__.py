@@ -1,6 +1,6 @@
 import typer
 import pyperclip as clip
-from encrytool import generatePassword,newKeys,encryting
+from encrytool import generatePassword,newKeys,encryting,generateXKCDPassword
 from pzsconfig import newConfig
 from rich import print
 
@@ -16,17 +16,22 @@ app.add_typer(cryptl, name="crypt")
 @app.command()
 def version():
     print("VERSION 0.1.0")
-    print("LICENSE under GPL-3.0")
     print("pysswordSz Copyright (C) 2024  Sidney Zhang <zly@lyzhang.me>")
+    print("Licensed under GPL-3.0 license.")
 
 @app.command()
-def genpass(n: int = 16, need_upper:bool = True,
+def genpass(n:int = 8, xkcd:bool = False, need_upper:bool = True,
             need_number:bool = True, need_punctuation:bool = True,
-            minia:int = 1, urlsafe:bool = False, 
+            minia:int = 1, urlsafe:bool = False,
+            xk_mode:str = "pinyin", xk_padding:bool = False,
             show:bool = True, to_clip:bool = False):
-    pswds = generatePassword(n = n, need_punctuation=need_punctuation,
-                             need_number=need_number,need_upper=need_upper,
-                             mina=minia, urlsafe=urlsafe)
+    if xkcd :
+        pswds = generateXKCDPassword(n=n, type_mode=xk_mode,
+                                     padding=xk_padding)
+    else:
+        pswds = generatePassword(n = n, need_punctuation=need_punctuation,
+                                 need_number=need_number,need_upper=need_upper,
+                                 mina=minia, urlsafe=urlsafe)
     if show :
         print(pswds)
     if to_clip :
@@ -71,8 +76,10 @@ def pss_delete(name:str):
     print("delete {}".format(name))
 
 @cryptl.command("encr")
-def ctl_encr(file:str, zip:bool=False):
-    print("encrypt {}".format(file))
+def ctl_encr(file:str):
+    cipher = encryting()
+    cipher.encrypt_file(file)
+    print("[green]Encryption is complete!")
 
 @cryptl.command("decr")
 def ctl_decr(file:str):
