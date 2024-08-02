@@ -1,6 +1,6 @@
 [project]
 name = "pysswordsz"
-version = "0.1.0"
+version = "0.1.2"
 description = "A password manager in Python that not only manages passwords but also serves as a simple encryption software."
 authors = [
     { name = "SidneyZhang", email = "zly@lyzhang.me" }
@@ -20,6 +20,9 @@ license = {file = "LICENSE"}
 Homepage = "https://github.com/SidneyLYZhang/pysswordSz"
 Repository = "https://github.com/SidneyLYZhang/pysswordSz"
 Issues = "https://github.com/SidneyLYZhang/pysswordSz/issues"
+
+[project.scripts]
+pysswordsz = "pysswordsz:cli"
 
 [build-system]
 requires = ["hatchling"]

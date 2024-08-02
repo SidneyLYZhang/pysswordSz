@@ -1,6 +1,6 @@
 from pathlib import Path
-from pzsconfig import pszconfig
-from encrytool import encryting,generatePassword
+from pysswordsz.pzsconfig import pszconfig
+from pysswordsz.encrytool import encryting,generatePassword
 from uuid import uuid4
 from datetime import datetime
 
@@ -10,7 +10,7 @@ import polars as pl
 
 def buildPWDB(name:str) -> None:
     cons = pszconfig()
-    filePlace = cons.datafoldar()
+    filePlace = cons.datafolder()
     columns = cons.columns
     data = {
         i:[] for i in (["uuid","name"]+columns+["password","createtime"])

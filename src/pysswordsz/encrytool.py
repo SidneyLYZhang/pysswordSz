@@ -8,7 +8,7 @@ from secrets import token_urlsafe,randbelow,choice
 from random import shuffle
 from math import floor,ceil
 from typing import Any
-from pzsconfig import pszconfig
+from pysswordsz.pzsconfig import pszconfig
 from getpass import getpass
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes,random
@@ -18,7 +18,7 @@ from zipfile import ZipFile,ZIP_DEFLATED
 from uuid import uuid3,NAMESPACE_URL
 from pathlib import Path
 from typer import prompt
-from pzsconfig import belongto
+from pysswordsz.pzsconfig import belongto
 
 
 def hasin(oripart:Callable, target:Any) -> int:
