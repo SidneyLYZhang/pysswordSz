@@ -10,7 +10,11 @@ A password manager in Python that not only manages passwords but also serves as 
 
 ## 安装 Installation
 
-暂无
+直接使用Python Pip进行安装：
+
+```bash
+$ python -m pip install pysswordsz
+```
 
 ## 快速开始 Quick Start
 

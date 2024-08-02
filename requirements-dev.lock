@@ -18,6 +18,8 @@ markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
+numpy==2.0.1
+    # via pysswordsz
 polars==1.3.0
     # via pysswordsz
 pycryptodome==3.20.0
