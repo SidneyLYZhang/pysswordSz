@@ -1,4 +1,4 @@
-# pysswordSz
+px# pysswordSz
 
 一个使用Python编写的密码管理器，除了可以管理密码之外，还可以作为一个简单的加密软件。
 A password manager in Python that not only manages passwords but also serves as a simple encryption software.
@@ -15,6 +15,16 @@ A password manager in Python that not only manages passwords but also serves as 
 ```bash
 $ python -m pip install pysswordsz
 ```
+
+或者使用`pipx`进行安装：
+
+```bash
+$ pipx install pysswordsz
+```
+
+如果你使用windows操作系统，也和我的很多同事一样，是个python苦手，那么我推荐使用我打包好的`exe`程序及对应的安装脚本（[`install.ps1`](install.ps1)）进行安装，相关说明见[对应文件](How_to_use_it_for_my_colleagues_zh_cn.md)。安装需要把安装脚本和打包文件放在同一个文件夹下，才能正常完成安装。
+
+另外，需要特别注意的是：目前打包的exe程序在创建[xkcd密码](https://xkcd.com/936/)时会出错，这个问题暂时我还未解决，除此之外的功能可以正常使用。如果发现还有什么问题或者有更好的建议欢迎给我[提出建议](https://github.com/SidneyLYZhang/pysswordSz/issues)。
 
 ## 快速开始 Quick Start
 
@@ -113,6 +123,8 @@ pysswordSz 的构建主要依赖以下关键Package：
 | [pyperclip](https://github.com/asweigart/pyperclip) | 1.9.0 | BSD-3-Clause license |
 | [pyyaml](https://pyyaml.org/) | 6.0.1 | MIT License |
 | [polars](https://pola.rs) | 1.3.0 | [LICENSE](https://github.com/pola-rs/polars/blob/main/LICENSE) |
+
+打包exe文件，使用的是[`nuitka`](https://nuitka.net/)。
 
 ## 许可信息 License
 
