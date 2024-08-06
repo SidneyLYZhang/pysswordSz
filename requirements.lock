@@ -32,7 +32,13 @@ pygments==2.18.0
     # via rich
 pyperclip==1.9.0
     # via pysswordsz
+pypinyin==0.52.0
+    # via pysswordsz
+pywubi==0.0.2
+    # via pysswordsz
 pyyaml==6.0.1
+    # via pysswordsz
+randomwords==0.4.0
     # via pysswordsz
 rich==13.7.1
     # via typer

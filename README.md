@@ -22,7 +22,7 @@ $ python -m pip install pysswordsz
 $ pipx install pysswordsz
 ```
 
-如果你使用windows操作系统，也和我的很多同事一样，是个python苦手，那么我推荐使用我打包好的`exe`程序及对应的安装脚本（[`install.ps1`](install.ps1)）进行安装，相关说明见[对应文件](How_to_use_it_for_my_colleagues_zh_cn.md)。安装需要把安装脚本和打包文件放在同一个文件夹下，才能正常完成安装。
+如果你使用windows操作系统，也和我的很多同事一样，是个python苦手，那么我推荐使用我打包好的`exe`程序及对应的安装脚本（[`install.ps1`](install.ps1)）进行安装，相关说明见[对应文件](How_to_use_it_for_my_colleagues_zh_cn.md)。安装需要把安装脚本和打包文件放在同一个文件夹下，才能正常完成安装。打包的压缩文件可以在[Releases](https://github.com/SidneyLYZhang/pysswordSz/releases)里面下载。
 
 另外，需要特别注意的是：目前打包的exe程序在创建[xkcd密码](https://xkcd.com/936/)时会出错，这个问题暂时我还未解决，除此之外的功能可以正常使用。如果发现还有什么问题或者有更好的建议欢迎给我[提出建议](https://github.com/SidneyLYZhang/pysswordSz/issues)。
 
@@ -124,7 +124,7 @@ pysswordSz 的构建主要依赖以下关键Package：
 | [pyyaml](https://pyyaml.org/) | 6.0.1 | MIT License |
 | [polars](https://pola.rs) | 1.3.0 | [LICENSE](https://github.com/pola-rs/polars/blob/main/LICENSE) |
 
-打包exe文件，使用的是[`nuitka`](https://nuitka.net/)。
+使用[`nuitka`](https://nuitka.net/)完成针对Windows的程序打包。
 
 ## 许可信息 License
 
@@ -132,6 +132,6 @@ pysswordSz is licensed under GPL-3.0 license.
 
 pysswordSz  Copyright (C) 2024  Sidney Zhang <zly@lyzhang.me>
 
-This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+This program comes with ABSOLUTELY NO WARRANTY; for details type `show w`.
 This is free software, and you are welcome to redistribute it
-under certain conditions; type `show c' for details.
+under certain conditions; type `show c` for details.
