@@ -20,11 +20,17 @@ class randomWords(object):
         if phrase :
             if mode != "english":
                 self.words.extend([getChineseWords() for _ in range(n)])
-            else :
-                self.words.extend([getChinese() for _ in range(n)])
-
-
+            else:
+                self.words.extend(random_words.randomWords(n))
+        else :
+            self.words.extend([getChinese() for _ in range(n)])
+        if mode != "english" :
+            pass
     def __str__(self):
-        return "".join(self.words)
+        return " ".join(self.words)
     def __repr__(self):
-        return "".join(self.words)
+        return " ".join(self.words)
+    def join(self, seq:str = " ") -> str:
+        return seq.join(self.words)
+    def plain_join(self) -> str :
+        pass
