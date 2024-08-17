@@ -1,8 +1,8 @@
-from .app import entry_point as cli
-from .app import main
+from pysswordsz.app import entry_point as cli
+from pysswordsz.app import main
 
-from .pwsmanager import pwsmanager
-from .encrytool import (
+from pysswordsz.pwsmanager import pwsmanager
+from pysswordsz.encrytool import (
     encryting,
     generatePassword,
     generateXKCDPassword

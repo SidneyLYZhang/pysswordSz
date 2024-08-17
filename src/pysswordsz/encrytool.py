@@ -19,6 +19,7 @@ from uuid import uuid3,NAMESPACE_URL
 from pathlib import Path
 from typer import prompt
 from pysswordsz.pzsconfig import belongto
+from pysswordsz.getrandwords import getrandomWords,justWord
 
 
 def hasin(oripart:Callable, target:Any) -> int:
@@ -45,15 +46,22 @@ def toprandList(top:int, n:int = 4, minz:int = 1) -> list[int] :
         res = [top - sum(res)] + res
     return res
 
+def randomUpper(word:str):
+    sl = len(word)
+    n = randbelow(sl)
+    return (word[:n]+word[n].upper()+word[n+1:])
+
 def generateXKCDPassword(n:int = 6, type_mode:str = "pinyin",
                          padding:bool = False) -> str :
-    if type_mode not in ["pinyin","wubi","english","german","spanish","mix"]:
+    if type_mode not in ["pinyin","wubi","english","wade","mix"]:
         raise ValueError("type_mode {} not exists".format(type_mode))
     file = Path(os.path.dirname(__file__)) / "static/{}.wordlist".format(type_mode)
-    sep = " " if padding is False else "!@$%^&*-_+=:|~?/.;"
-    coln = 0 if type_mode in ["pinyin","wubi"] else 1
-    words = pl.read_csv(file,has_header=False,separator="\t")
-    wordlist = [words[randbelow(words.height)].to_numpy()[0,coln].capitalize() for i in range(n)]
+    sep = " " if padding is False else "!@$%^&*-_+=:|~?.;"
+    if type_mode == "mix":
+        wordlist = [justWord() for _ in range(n)]
+    else:
+        wordlist = getrandomWords(n, mode = type_mode).words
+    wordlist = [randomUpper(i) for i in wordlist]
     if padding :
         xn = ceil(n/4)
         seqList = ["".join(random.sample(sep,xn)) for i in range(n)]
