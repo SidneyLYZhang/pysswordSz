@@ -18,12 +18,8 @@ markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
-nuitka==2.4.5
-    # via pysswordsz
 numpy==2.0.1
     # via pysswordsz
-ordered-set==4.1.0
-    # via nuitka
 polars==1.3.0
     # via pysswordsz
 pycryptodome==3.20.0
@@ -48,5 +44,3 @@ typer==0.12.3
     # via pysswordsz
 typing-extensions==4.12.2
     # via typer
-zstandard==0.23.0
-    # via nuitka
