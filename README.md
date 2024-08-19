@@ -1,4 +1,6 @@
-px# pysswordSz
+# pysswordSz
+
+[![](https://img.shields.io/badge/version-v0.2.6-blue)](https://github.com/SidneyLYZhang/pysswordSz/releases)
 
 一个使用Python编写的密码管理器，除了可以管理密码之外，还可以作为一个简单的加密软件。
 A password manager in Python that not only manages passwords but also serves as a simple encryption software.

@@ -19,7 +19,7 @@ app.add_typer(cryptl, name="crypt", help="encrypt or decrypt \t 加密解密")
 
 @app.command("version", help="show version \t\t 显示版本")
 def version():
-    print("VERSION 0.2.3")
+    print("VERSION 0.2.6")
     print("pysswordSz Copyright (C) 2024  Sidney Zhang <zly@lyzhang.me>")
     print("Licensed under GPL-3.0 license.")
 
