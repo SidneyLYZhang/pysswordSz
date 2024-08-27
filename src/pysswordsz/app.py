@@ -4,7 +4,12 @@ import polars as pl
 
 from typing_extensions import Annotated
 from pysswordsz.encrytool import generatePassword,newKeys,encryting,generateXKCDPassword
-from pysswordsz.pzsconfig import newConfig,pszconfig
+from pysswordsz.pzsconfig import (
+    newConfig,
+    pszconfig,
+    loadConfig,
+    exportConfig
+)
 from rich import print
 from pysswordsz.pwsmanager import pwsmanager,buildPWDB
 
@@ -19,11 +24,19 @@ app.add_typer(cryptl, name="crypt", help="encrypt or decrypt \t 加密解密")
 
 @app.command("version", help="show version \t\t 显示版本")
 def version():
-    print("VERSION 0.2.6")
+    print("VERSION 0.2.8")
     print("pysswordSz Copyright (C) 2024  Sidney Zhang <zly@lyzhang.me>")
     print("Licensed under GPL-3.0 license.")
 
-@app.command(help="generate password \t 生成密码")
+@app.command("load", help="Loading the Core files \t 快速加载已有密码库")
+def loading_config():
+    loadConfig()
+
+@app.command("export", help="Export all data files \t 导出关键数据")
+def exporting():
+    exportConfig()
+
+@app.command("gen",help="generate password \t 生成密码")
 def genpass(n:Annotated[int,typer.Argument(help="密码位数，建议普通密码至少10位，xkcd密码至少8词",show_default=False)] = 16,
             xkcd:Annotated[bool,typer.Option(help="生成XKCD密码")] = False,
             need_upper:Annotated[bool,typer.Option(help="需要大写字母")] = True,

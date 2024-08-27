@@ -3,6 +3,7 @@ from collections.abc import Callable
 import typer
 import yaml
 import platform
+import shutil
 import os
 
 def belongto(oripart:Callable, target:Callable) -> bool:
@@ -39,6 +40,52 @@ def newConfig() -> None:
     os.mkdir(setting_config())
     with open(setting_config() / "config.yaml", "w", encoding="utf-8") as fx :
         yaml.dump(data, fx)
+
+def loadConfig() -> None:
+    if os.getenv("PYSSWORDSZ") is None :
+        os.mkdir(setting_config())
+        configfolder = Path(
+            typer.prompt("请输入配置文件保存位置\nPlease enter the config-file saved location\n--> ")
+        )
+        shutil.copy(configfolder/"config.yaml", setting_config()/"config.yaml")
+        os.remove(configfolder/"config.yaml")
+    configData = pszconfig()
+    tpath = typer.prompt("请输入密钥KEY文件的保存位置\nPlease input the KEY file location\n--> ")
+    configData.setting("keyfolder", tpath)
+    tpath = typer.prompt("请输入数据DATA文件的保存位置\nPlease input the DATA file location\n--> ")
+    configData.setting("datafolder", tpath)
+    print("Complete setting config!")
+
+_EXPORTNOTE_ = """# README
+
+需要特别注意：**加密数据记录不会进行迁移。**
+
+可通过设定`PYSSWORDSZ`的环境变量，来直接导入配置文件，但是需要再确认KEY文件和密码库的保存位置。
+
+文件说明：
+
+- 配置文件的保存位置： `{}`
+- 密钥KEY文件的保存位置： `{}`
+- 密码DATA文件的保存位置： `{}`
+"""
+
+def exportConfig() -> None:
+    outputFolder = Path(
+        typer.prompt("请输入导出位置\nPlease input the export location\n--> ")
+    )
+    oriPath = setting_config()
+    oriConfig = pszconfig()
+    shutil.copytree(oriPath, outputFolder/"configuration")
+    shutil.copytree(oriConfig.keyfolder(), outputFolder/"key")
+    shutil.copytree(oriConfig.datafolder(), outputFolder/"data")
+    os.remove(outputFolder/"encinfoDB.lyz")
+    with open(outputFolder/"README.md", "w", encoding="utf-8") as f:
+        f.write(_EXPORTNOTE_.format(
+            str(outputFolder/"configuration"),
+            str(outputFolder/"key"),
+            str(outputFolder/"data")
+        ))
+    print("Complete exported all data!")
 
 class pszconfig(object):
     def __init__(self) -> None:

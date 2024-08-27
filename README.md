@@ -1,6 +1,6 @@
 # pysswordSz
 
-[![](https://img.shields.io/badge/version-v0.2.6-blue)](https://github.com/SidneyLYZhang/pysswordSz/releases)
+[![](https://img.shields.io/badge/version-v0.2.8-blue)](https://github.com/SidneyLYZhang/pysswordSz/releases)
 
 一个使用Python编写的密码管理器，除了可以管理密码之外，还可以作为一个简单的加密软件。
 A password manager in Python that not only manages passwords but also serves as a simple encryption software.
@@ -112,6 +112,23 @@ $ pysswordsz pass update theSystem
 ```bash
 $ pysswordsz config set <name> <value>
 $ pysswordsz config rm <name>
+```
+
+## 数据导出与加载 Export & Loads
+
+配置文件和密码库是可以迁移的。目前仅支持在当前是空数据时的导入，也就是简单迁移。
+暂时还不支持与已有数据进行合并，所以请特别注意这一点。
+
+导入操作：
+
+```bash
+$ pysswordsz load
+```
+
+导出操作：
+
+```bash
+$ pysswordsz export
 ```
 
 ## 依赖信息 Dependency
