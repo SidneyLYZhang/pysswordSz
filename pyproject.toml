@@ -1,6 +1,6 @@
 [project]
 name = "pysswordsz"
-version = "0.2.8"
+version = "0.2.9"
 description = "A password manager in Python that not only manages passwords but also serves as a simple encryption software."
 authors = [
     { name = "SidneyZhang", email = "zly@lyzhang.me" }
