@@ -131,64 +131,85 @@ class encryting(object):
         return plaintext.decode()
     def encrypt_file(self, file:str|Path, comments:str|None = None) -> None:
         oriPath = Path(file)
-        if oriPath.is_dir() :
-            zipPath = oriPath.parent/("{}.zip".format(oriPath.name))
-            with ZipFile(zipPath, 
-                         compression = ZIP_DEFLATED, compresslevel = 7,
-                         mode = "w") as fz :
-                for i in oriPath.glob("*") :
-                    fz.write(i, compress_type=ZIP_DEFLATED, compresslevel=7)
-            shutil.rmtree(oriPath)
-        with open((zipPath if oriPath.is_dir() else oriPath), "rb") as f:
-            data = f.read()
-        session_key = get_random_bytes(16)
-        cipher_rsa = PKCS1_OAEP.new(self.__public)
-        enc_session_key = cipher_rsa.encrypt(session_key)
-        cipher_aes = AES.new(session_key, AES.MODE_EAX)
-        ciphertext, tag = cipher_aes.encrypt_and_digest(data)
-        save_name = oriPath.parent/("{}.lyz".format(oriPath.name))
-        with open(save_name, "wb") as f:
-            f.write(enc_session_key)
-            f.write(cipher_aes.nonce)
-            f.write(tag)
-            f.write(ciphertext)
-        thisData = {
-             "UUID": [uuid3(NAMESPACE_URL,str(oriPath))],
-             "name": [("{}.lyz".format(oriPath.name))],
-             "path": [oriPath.parent],
-             "type": ["file" if oriPath.is_file() else "folder"],
-             "comments": [comments],
-             "time": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
-        }
-        encrList = self.list_files()
-        encrList = encrList.vstack(pl.from_dicts(thisData))
-        encrList.write_csv(self.__dataHome)
-        shutil.rmtree((zipPath if oriPath.is_dir() else oriPath))
+        if not oriPath.exists():
+            raise FileNotFoundError(f"File or directory not found: {oriPath}")
+        try:
+            if oriPath.is_dir():
+                zipPath = oriPath.parent/("{}.zip".format(oriPath.name))
+                with ZipFile(zipPath, 
+                             compression = ZIP_DEFLATED, compresslevel = 7,
+                             mode = "w") as fz :
+                    for i in oriPath.glob("*"):
+                        fz.write(i, compress_type=ZIP_DEFLATED, compresslevel=7)
+                shutil.rmtree(oriPath)
+                source = zipPath
+            else:
+                source = oriPath
+                
+            with open(source, "rb") as f:
+                data = f.read()
+            session_key = get_random_bytes(16)
+            cipher_rsa = PKCS1_OAEP.new(self.__public)
+            enc_session_key = cipher_rsa.encrypt(session_key)
+            cipher_aes = AES.new(session_key, AES.MODE_EAX)
+            ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+            save_name = oriPath.parent/("{}.lyz".format(oriPath.name))
+            with open(save_name, "wb") as f:
+                f.write(enc_session_key)
+                f.write(cipher_aes.nonce)
+                f.write(tag)
+                f.write(ciphertext)
+            thisData = {
+                "UUID": [uuid3(NAMESPACE_URL,str(oriPath))],
+                "name": [("{}.lyz".format(oriPath.name))],
+                "path": [oriPath.parent],
+                "type": ["file" if oriPath.is_file() else "folder"],
+                "comments": [comments],
+                "time": [datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+            }
+            encrList = self.list_files()
+            encrList = encrList.vstack(pl.from_dicts(thisData))
+            encrList.write_csv(self.__dataHome)
+            shutil.rmtree((zipPath if oriPath.is_dir() else oriPath))
+        except Exception as e:
+            raise RuntimeError(f"Encryption failed: {str(e)}") from e
     def decrypt_file(self, file:str|Path) -> None:
-        with open(Path(file), "rb") as f:
-            enc_session_key = f.read(self.__private.size_in_bytes())
-            nonce = f.read(16)
-            tag = f.read(16)
-            ciphertext = f.read()
-        cipher_rsa = PKCS1_OAEP.new(self.__private)
-        session_key = cipher_rsa.decrypt(enc_session_key)
-        cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
-        data = cipher_aes.decrypt_and_verify(ciphertext, tag)
-        disname = Path(file).name.replace(".lyz", "")
-        if "." in disname :
-            save_name = Path(file).parent/disname
-        else :
-            save_name = Path(file).parent/(disname+".zip")
-        with open(save_name, "wb") as f:
-            f.write(data)
-        shutil.rmtree(Path(file))
-        with ZipFile(save_name, "r") as fz :
-            fz.extractall(Path(file).parent)
-        shutil.rmtree(save_name)
-        encrList = self.list_files()
-        encrList = encrList.filter(
-            pl.col("UUID") != uuid3(NAMESPACE_URL,str(Path(file).parent/disname)))
-        encrList.write_csv(self.__dataHome)
+        try:
+            file_path = Path(file)
+            if not file_path.exists():
+                raise FileNotFoundError(f"Encrypted file not found: {file_path}")
+                
+            with open(file_path, "rb") as f:
+                enc_session_key = f.read(self.__private.size_in_bytes())
+                nonce = f.read(16)
+                tag = f.read(16)
+                ciphertext = f.read()
+                
+            cipher_rsa = PKCS1_OAEP.new(self.__private)
+            session_key = cipher_rsa.decrypt(enc_session_key)
+            cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
+            data = cipher_aes.decrypt_and_verify(ciphertext, tag)
+            
+            disname = file_path.name.replace(".lyz", "")
+            save_name = file_path.parent/(disname+".zip" if "." not in disname else disname)
+            
+            with open(save_name, "wb") as f:
+                f.write(data)
+                
+            if save_name.suffix == ".zip":
+                with ZipFile(save_name, "r") as fz:
+                    fz.extractall(file_path.parent)
+                save_name.unlink()
+                
+            file_path.unlink()
+            
+            encrList = self.list_files()
+            encrList = encrList.filter(
+                pl.col("UUID") != uuid3(NAMESPACE_URL, str(file_path.parent/disname)))
+            encrList.write_csv(self.__dataHome)
+            
+        except Exception as e:
+            raise RuntimeError(f"Decryption failed: {str(e)}") from e
     def list_files(self) -> pl.DataFrame:
         if self.__dataHome.exists() :
             return pl.read_csv(self.__dataHome)
